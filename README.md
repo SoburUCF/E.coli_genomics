@@ -1,5 +1,5 @@
-# E.coli_genomics
+# E.coli genomics and phenotypic analysis
 
-Pangenome analysis of ESBL-producing E. coli from Hospital environment in Bangladesh
+Characteristics of ESBL E. coli isolated from hospital environments and clinical samples in Bangladesh
 
-Published Journal: https://doi.org/10.1016/j.heliyon.2023.e22109
+Publication: https://doi.org/10.1016/j.heliyon.2023.e22109
