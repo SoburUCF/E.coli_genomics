@@ -1,0 +1,120 @@
+---
+title: "ecoli_analysis"
+output: html_document
+---
+
+# Heatmap and Correlation plot
+
+Import required packages
+```{r}
+library(readxl)
+library(tidyverse)
+library(corrplot) # to create correlation matrix plot
+library(heatmap3)
+library(pheatmap)
+```
+
+## Heatmap and Hierarchical Figure 5
+
+Import Data
+```{r}
+data_heat <- read_excel("data_E.coli - Coded2(V2).xlsx",sheet = 1)
+```
+
+Label Sample Source column
+```{r}
+data_heat$`Sample Source` <- as.factor (ifelse(data_heat$`Sample Source`==0,"Environmental","Clinical"))
+```
+
+Separate row annotation
+```{r}
+ann_row <- data.frame(data_heat[,c("Sampling_point", "Sample Source", "Hospital")])
+```
+
+Include sample Ids as row name
+```{r}
+rownames(ann_row) <- data_heat$Isolate
+```
+
+Convert to factor
+```{r}
+ann_row[,1]<-as.factor(ann_row[,1])
+ann_row[,2]<-as.factor(ann_row[,2])
+```
+
+Change the Column name
+```{r}
+colnames(ann_row)<-c("Sampling Point", "Sample Source", "Hospital")
+```
+
+```{r}
+rownames(ann_row) <- sub("^EC-", "LEH-", rownames(ann_row))
+```
+
+Select data
+```{r}
+mat_work <- as.matrix(data_heat[,c(7:25)])
+rownames(mat_work) <- data_heat$Isolate
+rownames(mat_work) <- sub("^EC-", "LEH-", rownames(mat_work))
+```
+
+
+```{r}
+ann_color<-list("Sample Source"=c(Clinical='#464DE5',Environmental="yellow"))
+```
+
+
+```{r}
+# Define the output file and set the dimensions
+#png("./Outputs/heatmap.png", height = 1400, width = 500)
+
+# Generate the heatmap
+pheatmap(
+  mat = mat_work,
+  scale = "none",
+  cluster_cols = FALSE,
+  clustering_distance_rows = "binary",
+  clustering_method = "ward.D2",
+  col = colorRampPalette(c("Green", "Red"))(1024),
+  annotation_row = ann_row,
+  annotation_colors = ann_color,
+  legend = FALSE,
+  cellwidth = 11,
+  cellheight = 11,
+  margins = c(40, 20)
+)
+
+# Close the device
+#dev.off()
+```
+
+
+
+
+## Correlation matrix of phenotype Figure 6
+
+
+
+
+Import data
+```{r}
+data_cor <- read_excel("data_E.coli.xlsx", sheet = "Sheet2")
+```
+
+Select required column for correlation matrix
+```{r}
+data_cor <- data_cor[,c(7:32,33)]
+```
+
+Create a correlation matrix
+The cor() function will compute pairwise correlations between the selected columns of the data frame.
+```{r}
+corr <- cor(data_cor)
+```
+
+Create correlation matrix plot
+```{r}
+corrplot(corr,type = "upper", diag = F, tl.col="black",insig = "blank")
+```
+
+
